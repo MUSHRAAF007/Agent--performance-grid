@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%;">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSA Agent Command Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          screens: {
+            'xs': '320px',
+            '3xl': '1920px',
+            '4k': '2560px',
+          },
+          fontFamily: {
+            heading: ['Orbitron', 'monospace'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            neon: {
+              green: '#00ff88',
+              blue: '#00d4ff',
+              red: '#ff3366',
+              yellow: '#ffcc00',
+              purple: '#bf5af2',
+              orange: '#ff6b35',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3s ease-in-out infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="font-body text-slate-300 antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+
+  <!-- HEADER -->
+  <header class="fixed top-0 w-full z-40 glass-panel border-b border-slate-800/50 rounded-none">
+    <div class="w-full mx-auto px-4 md:px-8 h-[4rem] flex items-center justify-between">
+      <div class="flex items-center gap-2 md:gap-4">
+        <div
+          class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-cyan-900/30 border border-cyan-500/30 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6 text-cyan-400" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-heading text-sm sm:text-lg text-white tracking-wider neon-text leading-tight">RSA COMMAND
+            CENTER</h1>
+          <div
+            class="flex items-center gap-2 text-[0.5rem] sm:text-[0.625rem] text-cyan-400/70 font-heading tracking-widest">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shrink-0"></span>
+            <span class="truncate">LIVE OPERATIONS MONITOR</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 md:gap-8">
+        <div class="hidden sm:flex items-center gap-4 md:gap-6 text-[0.6rem] md:text-xs font-heading text-slate-400">
+          <div class="flex flex-col items-end">
+            <span class="text-[0.5rem] sm:text-[0.625rem] text-slate-500">SYSTEM STATUS</span>
+            <span class="text-green-400">ONLINE • 99.9%</span>
+          </div>
+          <div class="h-6 md:h-8 w-[0.0625rem] bg-slate-800"></div>
+          <div class="flex flex-col items-end">
+            <span class="text-[0.5rem] sm:text-[0.625rem] text-slate-500">ACTIVE AGENTS</span>
+            <span class="text-cyan-400 text-sm md:text-base font-bold" id="header-agent-count">0</span>
+          </div>
+          <div class="h-6 md:h-8 w-[0.0625rem] bg-slate-800 hidden lg:block"></div>
+          <div class="flex flex-col items-end hidden lg:flex">
+            <span class="text-[0.5rem] sm:text-[0.625rem] text-slate-500">LOCAL TIME</span>
+            <span class="text-white text-base" id="clock">00:00:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="pt-[6rem] pb-[3rem] px-4 md:px-8 w-full mx-auto">
+
+    <!-- KPI STRIP -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-6 md:mb-8">
+      <!-- Total Cases -->
+      <div class="glass-panel p-3 md:p-4 relative overflow-hidden group flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-white" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-slate-400 tracking-wider mb-1">TOTAL CASES
+          </div>
+          <div class="text-2xl sm:text-3xl font-heading text-white neon-text font-bold" id="kpi-total">0</div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-cyan-500 w-3/4"></div>
+        </div>
+      </div>
+
+      <!-- Active -->
+      <div class="glass-panel p-3 md:p-4 relative overflow-hidden group flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-yellow-400" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-slate-400 tracking-wider mb-1">ACTIVE</div>
+          <div class="text-2xl sm:text-3xl font-heading text-yellow-400 font-bold" id="kpi-active">0</div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-yellow-500 w-1/2"></div>
+        </div>
+      </div>
+
+      <!-- ROS Done -->
+      <div class="glass-panel p-3 md:p-4 relative overflow-hidden group flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-green-400" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-slate-400 tracking-wider mb-1">ROS DONE</div>
+          <div class="text-2xl sm:text-3xl font-heading text-green-400 neon-text-green font-bold" id="kpi-ros">0</div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 w-2/3"></div>
+        </div>
+      </div>
+
+      <!-- Towing -->
+      <div class="glass-panel p-3 md:p-4 relative overflow-hidden group flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-orange-400" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13" />
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-slate-400 tracking-wider mb-1">TOWING</div>
+          <div class="text-2xl sm:text-3xl font-heading text-orange-400 neon-text-orange font-bold" id="kpi-towing">0
+          </div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-orange-500 w-1/3"></div>
+        </div>
+      </div>
+
+      <!-- Dealer -->
+      <div class="glass-panel p-3 md:p-4 relative overflow-hidden group flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-blue-400" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 21h18" />
+            <path d="M5 21V7l8-4 8 4v14" />
+            <path d="M8 21v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-slate-400 tracking-wider mb-1">DEALER</div>
+          <div class="text-2xl sm:text-3xl font-heading text-blue-400 font-bold" id="kpi-dealer">0</div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-blue-500 w-1/4"></div>
+        </div>
+      </div>
+
+      <!-- Failed -->
+      <div
+        class="glass-panel p-3 md:p-4 relative overflow-hidden group border-red-500/30 flex flex-col justify-between">
+        <div class="absolute top-0 right-0 p-2 md:p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 md:w-12 md:h-12 text-red-500" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-[0.55rem] sm:text-[0.625rem] font-heading text-red-400 tracking-wider mb-1">FAILED</div>
+          <div class="text-2xl sm:text-3xl font-heading text-red-500 font-bold" id="kpi-failed">0</div>
+        </div>
+        <div class="mt-2 md:mt-3 h-[0.25rem] w-full bg-slate-800 rounded-full overflow-hidden">
+          <div class="h-full bg-red-500 w-1/5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT GRID SECTION -->
+    <div class="mb-4 md:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-0">
+      <h2 class="font-heading text-lg md:text-xl text-white tracking-widest flex items-center gap-2 md:gap-3">
+        <span class="w-[0.5rem] h-6 md:h-8 bg-cyan-500 rounded-sm"></span>
+        AGENT PERFORMANCE GRID
+      </h2>
+      <div class="flex gap-2 self-end sm:self-auto">
+        <span
+          class="px-2 py-1 md:px-3 rounded bg-slate-800 border border-slate-700 text-[0.65rem] md:text-xs text-slate-400 font-heading shrink-0 cursor-pointer hover:bg-slate-700 transition">SORT:
+          CASES ▼</span>
+        <span
+          class="px-2 py-1 md:px-3 rounded bg-slate-800 border border-slate-700 text-[0.65rem] md:text-xs text-slate-400 font-heading shrink-0 cursor-pointer hover:bg-slate-700 transition">FILTER:
+          ALL</span>
+      </div>
+    </div>
+
+    <!-- DYNAMIC AGENT GRID -->
+    <div id="agent-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 4k:grid-cols-6 gap-4 md:gap-6">
+      <!-- Agent cards will be injected here by JS -->
+    </div>
+
+  </main>
+
+  <!-- AGENT DETAILS MODAL -->
+  <div id="agent-modal"
+    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <!-- Modal Content Container -->
+    <div
+      class="relative w-full max-w-4xl aspect-[16/9] sm:aspect-auto sm:min-h-[450px] rounded-xl overflow-hidden shadow-2xl shadow-cyan-500/20 border border-slate-700/50 bg-slate-900 flex flex-col sm:flex-row agent-modal-bg animate-[float_3s_ease-in-out_infinite]">
+
+      <!-- Close Button -->
+      <button onclick="closeModal()"
+        class="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 w-8 h-8 md:w-10 md:h-10 rounded-full bg-red-500/20 border flex items-center justify-center text-red-500 hover:bg-red-500/40 border-red-500/50 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Details (Left Side) -->
+      <div
+        class="flex-1 p-6 pt-16 sm:p-10 sm:pt-10 flex flex-col justify-center z-10 bg-slate-900/60 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none">
+        <div class="mb-6">
+          <div class="text-cyan-400 font-heading text-sm sm:text-base tracking-widest mb-1">AGENT PROFILE</div>
+          <h2 id="modal-agent-name"
+            class="text-3xl sm:text-5xl font-heading font-bold text-white neon-text uppercase tracking-wider">AGENT NAME
+          </h2>
+          <div id="modal-agent-id" class="text-slate-400 font-mono text-sm sm:text-base mt-2">ID: ---</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 sm:gap-6">
+          <!-- Total Cases -->
+          <div class="bg-slate-800/80 p-4 rounded-lg border border-slate-700/50">
+            <div class="text-xs sm:text-sm text-slate-400 font-heading tracking-widest mb-1">TOTAL CASES</div>
+            <div id="modal-total" class="text-2xl sm:text-4xl font-heading text-white neon-text font-bold">0</div>
+          </div>
+
+          <!-- ROS Done -->
+          <div class="bg-slate-800/80 p-4 rounded-lg border border-slate-700/50">
+            <div class="text-xs sm:text-sm text-slate-400 font-heading tracking-widest mb-1">ROS DONE</div>
+            <div id="modal-ros" class="text-2xl sm:text-4xl font-heading text-green-400 neon-text-green font-bold">0
+            </div>
+          </div>
+
+          <!-- Towing -->
+          <div class="bg-slate-800/80 p-4 rounded-lg border border-slate-700/50">
+            <div class="text-xs sm:text-sm text-slate-400 font-heading tracking-widest mb-1">TOWING</div>
+            <div id="modal-towing" class="text-2xl sm:text-4xl font-heading text-orange-400 neon-text-orange font-bold">
+              0</div>
+          </div>
+
+          <!-- Dealer -->
+          <div class="bg-slate-800/80 p-4 rounded-lg border border-slate-700/50">
+            <div class="text-xs sm:text-sm text-slate-400 font-heading tracking-widest mb-1">DEALER SUPPORT</div>
+            <div id="modal-dealer" class="text-2xl sm:text-4xl font-heading text-blue-400 font-bold">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Image (Right Side) -->
+      <div class="hidden sm:flex flex-1 items-center justify-center p-10 z-10">
+        <div
+          class="relative w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-cyan-500/30 shadow-[0_0_50px_rgba(0,212,255,0.2)] flex items-center justify-center overflow-hidden bg-slate-800">
+          <img id="modal-agent-image" src="" alt="Agent Image"
+            class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500">
+          <!-- Decorative rings -->
+          <div class="absolute inset-0 rounded-full border border-cyan-400/50 animate-pulse-slow"></div>
+          <div
+            class="absolute -inset-4 rounded-full border border-dashed border-cyan-500/30 animate-[spin_20s_linear_infinite]">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
